@@ -1,356 +1,705 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#101112">
-<title>HabitFlow</title>
+<title>HabitFlow — Daily Habits</title>
 <style>
 :root {
-  color-scheme: dark;
-  --bg: #101112;
-  --panel: #1b1d20;
-  --muted: #92969e;
-  --green: #a3f56b;
-  --border: #303238;
+  --bg:#101112;
+  --panel:#1b1c20;
+  --panel2:#222329;
+  --text:#f5f5f5;
+  --muted:#92959f;
+  --green:#a3f56b;
+  --border:#303239;
 }
-* { box-sizing: border-box; }
+* { box-sizing:border-box; }
 body {
-  margin: 0; background: var(--bg); color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
-main {
-  max-width: 520px; margin: auto; padding: 25px 18px 45px;
-  padding-top: max(25px, env(safe-area-inset-top));
+button,input { font:inherit; }
+button { cursor:pointer; }
+.app {
+  max-width:850px;
+  margin:auto;
+  padding:32px 22px 55px;
 }
-header { display:flex; align-items:center; justify-content:space-between; }
-.logo { color:var(--green); font-weight:800; letter-spacing:1px; }
-h1 { font-size:30px; margin:23px 0 5px; }
-.sub { color:var(--muted); font-size:14px; }
-.card {
-  background:var(--panel); border:1px solid var(--border);
-  border-radius:19px; padding:17px; margin-top:17px;
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:34px;
 }
-.summary { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.big { font-size:29px; font-weight:800; margin-top:7px; }
+.brand { color:var(--green); font-weight:800; letter-spacing:3px; }
+.date { color:var(--muted); font-size:14px; margin-top:8px; }
+h1 { font-size:38px; margin:0 0 8px; letter-spacing:-1.5px; }
+.subtitle { color:var(--muted); margin:0 0 30px; }
+.panel {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:25px;
+  padding:24px;
+  margin-bottom:30px;
+}
+.section-title {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:38px 0 20px;
+}
+h2 { font-size:25px; margin:0; }
+.muted { color:var(--muted); }
+.small { font-size:13px; }
+.primary {
+  background:var(--green);
+  color:#151713;
+  border:0;
+  border-radius:15px;
+  padding:15px 18px;
+  font-weight:750;
+}
+.secondary {
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px 14px;
+}
+.progress-top {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:1px;
+}
+.progress-number {
+  font-size:52px;
+  font-weight:800;
+  margin:18px 0;
+}
 .green { color:var(--green); }
-.progress { height:8px; background:#33363b; border-radius:20px; margin-top:15px; overflow:hidden; }
-.fill { height:100%; width:0; background:var(--green); border-radius:20px; transition:width .2s; }
-.section { display:flex; align-items:center; justify-content:space-between; margin:28px 0 12px; }
-h2 { font-size:18px; margin:0; }
-button, input {
-  font:inherit; border-radius:12px; padding:12px;
+.track {
+  height:12px;
+  background:#303137;
+  border-radius:20px;
+  overflow:hidden;
 }
-button { border:0; cursor:pointer; font-weight:650; }
-.add { background:var(--green); color:#111; padding:10px 14px; }
+.fill {
+  height:100%;
+  width:0%;
+  background:var(--green);
+  border-radius:20px;
+  transition:width .25s;
+}
+.habit-list { display:grid; gap:12px; }
 .habit {
-  display:flex; align-items:center; gap:13px;
-  background:var(--panel); border:1px solid var(--border);
-  border-radius:16px; padding:14px; margin-top:10px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:17px;
+  display:flex;
+  align-items:center;
+  gap:14px;
 }
 .check {
-  width:27px; height:27px; flex-shrink:0; border:2px solid #555a60;
-  border-radius:9px; background:transparent; color:#111; padding:0;
+  width:29px;
+  height:29px;
+  flex-shrink:0;
+  border-radius:9px;
+  border:2px solid #555761;
+  background:transparent;
+  color:#141612;
+  font-size:19px;
+  font-weight:bold;
 }
-.check.done { background:var(--green); border-color:var(--green); }
+.check.done {
+  background:var(--green);
+  border-color:var(--green);
+}
 .habit-info { flex:1; min-width:0; }
-.habit-name { font-weight:700; overflow-wrap:anywhere; }
-.habit-meta { font-size:12px; color:var(--muted); margin-top:5px; }
-.habit.completed .habit-name { color:var(--muted); text-decoration:line-through; }
-.fire { color:#ffc36b; font-size:13px; margin-top:5px; }
-.delete { background:transparent; color:#8e929a; font-size:20px; padding:5px; }
-.days { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; margin-top:16px; }
-.day { text-align:center; color:var(--muted); font-size:12px; }
-.dot {
-  width:30px; height:30px; margin:8px auto 0; border-radius:50%;
-  background:#303238; display:grid; place-items:center; color:#eee;
+.habit-name { font-size:17px; font-weight:700; overflow-wrap:anywhere; }
+.habit-meta { color:var(--muted); font-size:12px; margin-top:7px; }
+.habit.completed .habit-name {
+  color:var(--muted);
+  text-decoration:line-through;
 }
-.dot.complete { background:var(--green); color:#101112; font-weight:800; }
-.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.stat { background:#24262a; padding:14px; border-radius:13px; }
-.stat strong { display:block; font-size:25px; margin-top:6px; }
-.small { color:var(--muted); font-size:12px; }
-.field { display:flex; gap:8px; margin-top:13px; }
+.delete {
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  padding:8px;
+  font-size:20px;
+}
+.empty {
+  text-align:center;
+  padding:30px 12px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.form {
+  display:grid;
+  gap:13px;
+  margin-top:20px;
+}
+label { color:var(--muted); font-size:13px; }
+.field { display:grid; gap:8px; }
 input {
-  min-width:0; width:100%; color:#fff; background:#101112;
-  border:1px solid #3b3e44; outline:none;
+  width:100%;
+  color:var(--text);
+  background:#121316;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  min-height:48px;
 }
-input:focus { border-color:var(--green); }
-.primary { background:var(--green); color:#101112; }
-.secondary { background:#303238; color:white; }
-.settings-row { margin-top:14px; }
-.settings-row label { display:block; font-size:14px; margin-bottom:8px; }
-.note { color:var(--muted); font-size:12px; line-height:1.6; }
-footer { text-align:center; color:#777b83; font-size:12px; margin-top:27px; }
+input:focus { outline:1px solid var(--green); }
+input[type="time"] { color-scheme:dark; }
+.form-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.week {
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:8px;
+  margin:24px 0;
+}
+.day { text-align:center; color:var(--muted); font-size:12px; }
+.day-circle {
+  width:100%;
+  max-width:48px;
+  aspect-ratio:1;
+  border-radius:50%;
+  background:#303137;
+  display:grid;
+  place-items:center;
+  margin:12px auto 0;
+  color:var(--muted);
+  font-size:12px;
+}
+.day-circle.active {
+  background:var(--green);
+  color:#151713;
+  font-weight:800;
+}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.stat {
+  background:var(--panel2);
+  border-radius:18px;
+  padding:20px;
+  min-width:0;
+}
+.stat-label {
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.7px;
+  line-height:1.5;
+}
+.stat-value {
+  font-size:29px;
+  font-weight:800;
+  margin-top:12px;
+  overflow-wrap:anywhere;
+}
+.reminder-note { line-height:1.6; color:var(--muted); font-size:13px; }
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:40px;
+}
+[hidden] { display:none !important; }
+@media(min-width:650px) {
+  .app { padding:45px 32px 65px; }
+  .stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  h1 { font-size:46px; }
+}
+@media(max-width:380px) {
+  .app { padding:25px 15px 40px; }
+  h1 { font-size:32px; }
+  .panel { padding:19px; }
+  .primary { padding:12px; }
+}
 </style>
 </head>
 <body>
-<main>
+<main class="app">
   <header>
-    <div class="logo">✳ HABITFLOW</div>
-    <div id="date" class="small"></div>
+    <div>
+      <div class="brand">✳ HABITFLOW</div>
+      <div class="date" id="todayDate"></div>
+    </div>
+    <button class="secondary" id="reminderPermission">♧ Reminders</button>
   </header>
 
   <h1>Build your day.</h1>
-  <div class="sub">Small steps. Real progress.</div>
+  <p class="subtitle">Small steps. Real progress.</p>
 
-  <section class="card">
-    <div class="summary">
-      <div>
-        <div class="small">TODAY'S PROGRESS</div>
-        <div class="big"><span id="doneCount">0</span>/<span id="totalCount">0</span></div>
-      </div>
-      <div style="text-align:right">
-        <div class="small">COMPLETED</div>
-        <div class="big green" id="percent">0%</div>
-      </div>
+  <section class="panel">
+    <div class="progress-top">
+      <span>TODAY'S PROGRESS</span>
+      <span id="completedLabel">0 / 0 DONE</span>
     </div>
-    <div class="progress"><div id="progressFill" class="fill"></div></div>
+    <div class="progress-number">
+      <span id="progressNumber">0</span><span class="green">%</span>
+    </div>
+    <div class="track"><div class="fill" id="progressFill"></div></div>
   </section>
 
-  <div class="section">
+  <div class="section-title">
     <h2>My habits</h2>
-    <button class="add" id="showAdd">+ Add habit</button>
+    <button class="primary" id="showForm">＋ Add habit</button>
   </div>
 
-  <section id="addPanel" class="card" hidden>
-    <h2>New habit</h2>
-    <form id="habitForm">
+  <section class="panel" id="formPanel" hidden>
+    <h2 style="font-size:20px">Create a habit</h2>
+    <form class="form" id="habitForm">
       <div class="field">
-        <input id="habitName" maxlength="60" placeholder="e.g. Study CS201" required>
+        <label for="habitName">Habit name</label>
+        <input id="habitName" maxlength="70" placeholder="e.g. Read for 20 minutes" required>
       </div>
       <div class="field">
-        <input id="habitGoal" maxlength="35" placeholder="Daily goal (e.g. 30 minutes)">
+        <label for="reminderTime">Daily reminder (optional)</label>
+        <input id="reminderTime" type="time">
       </div>
-      <div class="field">
+      <div class="form-actions">
         <button class="primary" type="submit">Save habit</button>
-        <button class="secondary" type="button" id="cancelAdd">Cancel</button>
+        <button class="secondary" type="button" id="cancelForm">Cancel</button>
       </div>
+      <p class="reminder-note">Reminder notifications require permission and the page to remain open.</p>
     </form>
   </section>
 
-  <section id="habitList"></section>
+  <div class="habit-list" id="habitList"></div>
 
-  <div class="section"><h2>This week</h2><span class="small">Last 7 days</span></div>
-  <section class="card">
-    <div class="days" id="weekDays"></div>
-    <div class="progress"><div id="weekFill" class="fill"></div></div>
-    <p class="small" id="weekText">Complete a habit to start your progress.</p>
+  <div class="section-title">
+    <h2>This week</h2>
+    <span class="muted small">Last 7 days</span>
+  </div>
+  <section class="panel">
+    <div class="week" id="weekGrid"></div>
+    <div class="track"><div class="fill" id="weekFill"></div></div>
+    <p class="reminder-note" id="weekSummary">Your weekly progress will appear here.</p>
   </section>
 
-  <div class="section"><h2>Your statistics</h2></div>
-  <section class="stat-grid">
-    <div class="stat"><span class="small">CURRENT BEST STREAK</span><strong id="bestStreak">0 days</strong></div>
-    <div class="stat"><span class="small">WEEKLY COMPLETIONS</span><strong id="weekTotal">0</strong></div>
-    <div class="stat"><span class="small">TODAY'S RATE</span><strong id="todayRate">0%</strong></div>
-    <div class="stat"><span class="small">TOTAL HABITS</span><strong id="habitTotal">0</strong></div>
-  </section>
-
-  <div class="section"><h2>Reminder</h2></div>
-  <section class="card">
-    <div class="small">DAILY REMINDER TIME</div>
-    <div class="field">
-      <input id="reminderTime" type="time" value="20:00" aria-label="Reminder time">
-      <button class="primary" id="saveReminder">Save</button>
+  <div class="section-title"><h2>Your statistics</h2></div>
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-label">CURRENT BEST STREAK</div>
+      <div class="stat-value" id="bestStreak">0 days</div>
     </div>
-    <p class="note" id="reminderStatus">Set a time to remind yourself to check your habits.</p>
-    <button class="secondary" id="enableReminder">Enable notifications</button>
-    <p class="note">On iPhone, notifications for web apps require compatible iOS, Home Screen installation, and notification permission. This app checks the reminder while it is open; it cannot guarantee an alert while closed.</p>
+    <div class="stat">
+      <div class="stat-label">WEEKLY COMPLETIONS</div>
+      <div class="stat-value" id="weeklyCompletions">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">TODAY'S RATE</div>
+      <div class="stat-value" id="todayRate">0%</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">TOTAL HABITS</div>
+      <div class="stat-value" id="totalHabits">0</div>
+    </div>
   </section>
 
-  <footer>Your journey, your pace. Data is saved in this browser on this device.</footer>
+  <div class="section-title">
+    <h2>Data & reminders</h2>
+  </div>
+  <section class="panel">
+    <p class="reminder-note">
+      Your habits are saved in this browser on this device. Clearing browser data
+      may remove them. Export a backup regularly.
+    </p>
+    <div class="form-actions">
+      <button class="secondary" id="exportData">Export backup</button>
+      <button class="secondary" id="importButton">Import backup</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </div>
+    <p class="reminder-note" id="statusMessage" role="status"></p>
+  </section>
+
+  <footer>HABITFLOW · ONE DAY AT A TIME</footer>
 </main>
 
 <script>
-const $ = id => document.getElementById(id);
-const todayKey = () => {
-  const d = new Date();
-  return d.getFullYear() + "-" +
-    String(d.getMonth()+1).padStart(2,"0") + "-" +
-    String(d.getDate()).padStart(2,"0");
-};
-const shiftDate = (date, offset) => {
-  const d = new Date(date + "T12:00:00");
-  d.setDate(d.getDate() + offset);
-  return d.getFullYear() + "-" +
-    String(d.getMonth()+1).padStart(2,"0") + "-" +
-    String(d.getDate()).padStart(2,"0");
-};
-const read = (key, fallback) => {
-  try {
-    const v = localStorage.getItem(key);
-    return v ? JSON.parse(v) : fallback;
-  } catch { return fallback; }
-};
-let habits = read("hf-habits", []);
-let logs = read("hf-logs", {});
-let reminder = localStorage.getItem("hf-reminder") || "20:00";
-let lastAlertDate = "";
-let notificationReady = false;
+(function () {
+  "use strict";
 
-function save() {
-  localStorage.setItem("hf-habits", JSON.stringify(habits));
-  localStorage.setItem("hf-logs", JSON.stringify(logs));
-}
-function isDone(id, date) {
-  return !!(logs[date] && logs[date][id]);
-}
-function streak(id) {
-  let count = 0;
-  let day = todayKey();
-  if (!isDone(id, day)) day = shiftDate(day, -1);
-  while (isDone(id, day)) {
-    count++;
-    day = shiftDate(day, -1);
-  }
-  return count;
-}
-function render() {
-  const today = todayKey();
-  $("date").textContent = new Date().toLocaleDateString(undefined,
-    {month:"short", day:"numeric"});
-  const completed = habits.filter(h => isDone(h.id, today)).length;
-  const rate = habits.length ? Math.round(completed / habits.length * 100) : 0;
-  $("doneCount").textContent = completed;
-  $("totalCount").textContent = habits.length;
-  $("percent").textContent = rate + "%";
-  $("todayRate").textContent = rate + "%";
-  $("progressFill").style.width = rate + "%";
-  $("habitTotal").textContent = habits.length;
+  const STORAGE_KEY = "habitflow_data_v1";
+  const $ = id => document.getElementById(id);
 
-  const list = $("habitList");
-  list.replaceChildren();
-  if (!habits.length) {
-    const p = document.createElement("p");
-    p.className = "note";
-    p.style.textAlign = "center";
-    p.style.padding = "20px 5px";
-    p.textContent = "No habits yet. Tap + Add habit to create your first one.";
-    list.append(p);
+  function localDate(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   }
-  habits.forEach(h => {
-    const done = isDone(h.id, today);
-    const item = document.createElement("div");
-    item.className = "habit" + (done ? " completed" : "");
-    const check = document.createElement("button");
-    check.className = "check" + (done ? " done" : "");
-    check.textContent = done ? "✓" : "";
-    check.setAttribute("aria-label", done ? "Mark incomplete" : "Mark complete");
-    check.onclick = () => {
-      if (!logs[today]) logs[today] = {};
-      if (logs[today][h.id]) delete logs[today][h.id];
-      else logs[today][h.id] = true;
-      save(); render();
-    };
-    const info = document.createElement("div");
-    info.className = "habit-info";
-    const name = document.createElement("div");
-    name.className = "habit-name";
-    name.textContent = h.name;
-    const goal = document.createElement("div");
-    goal.className = "habit-meta";
-    goal.textContent = h.goal || "Daily habit";
-    const fire = document.createElement("div");
-    fire.className = "fire";
-    fire.textContent = "🔥 " + streak(h.id) + " day streak";
-    info.append(name, goal, fire);
-    const del = document.createElement("button");
-    del.className = "delete";
-    del.textContent = "×";
-    del.setAttribute("aria-label", "Delete " + h.name);
-    del.onclick = () => {
-      if (confirm('Delete "' + h.name + '" and its saved history?')) {
-        habits = habits.filter(x => x.id !== h.id);
-        Object.keys(logs).forEach(d => delete logs[d][h.id]);
-        save(); render();
-      }
-    };
-    item.append(check, info, del);
-    list.append(item);
-  });
 
-  let total = 0, possible = 0;
-  const days = $("weekDays");
-  days.replaceChildren();
-  for (let i = 6; i >= 0; i--) {
-    const date = shiftDate(today, -i);
-    const count = habits.filter(h => isDone(h.id, date)).length;
-    total += count;
-    possible += habits.length;
-    const day = document.createElement("div");
-    day.className = "day";
-    const label = document.createElement("div");
-    label.textContent = new Date(date + "T12:00:00").toLocaleDateString(
-      undefined, {weekday:"short"}).slice(0,2);
-    const dot = document.createElement("div");
-    dot.className = "dot" + (habits.length > 0 && count === habits.length ? " complete" : "");
-    dot.textContent = habits.length && count === habits.length ? "✓" : count || "·";
-    day.append(label, dot);
-    days.append(day);
+  function shiftDate(dateString, offset) {
+    const d = new Date(dateString + "T12:00:00");
+    d.setDate(d.getDate() + offset);
+    return localDate(d);
   }
-  const weeklyRate = possible ? Math.round(total / possible * 100) : 0;
-  $("weekFill").style.width = weeklyRate + "%";
-  $("weekText").textContent = total + " habit completions in the last 7 days (" + weeklyRate + "% of possible check-offs).";
-  $("weekTotal").textContent = total;
-  $("bestStreak").textContent = habits.length ?
-    Math.max(...habits.map(h => streak(h.id))) + " days" : "0 days";
-}
-$("showAdd").onclick = () => {
-  $("addPanel").hidden = false;
-  $("habitName").focus();
-};
-$("cancelAdd").onclick = () => $("addPanel").hidden = true;
-$("habitForm").onsubmit = e => {
-  e.preventDefault();
-  const name = $("habitName").value.trim();
-  if (!name) return;
-  habits.push({
-    id: (Date.now().toString(36) + Math.random().toString(36).slice(2,7)),
-    name, goal: $("habitGoal").value.trim()
-  });
-  save(); render();
-  $("habitForm").reset();
-  $("addPanel").hidden = true;
-};
-$("reminderTime").value = reminder;
-$("saveReminder").onclick = () => {
-  reminder = $("reminderTime").value || "20:00";
-  localStorage.setItem("hf-reminder", reminder);
-  $("reminderStatus").textContent = "Reminder time saved: " + reminder + ". Keep the app open for its in-app reminder check.";
-};
-$("enableReminder").onclick = async () => {
-  if (!("Notification" in window)) {
-    $("reminderStatus").textContent = "Notifications aren't supported in this browser. You can set a repeating reminder in the iPhone Clock or Reminders app.";
-    return;
+
+  function freshData() {
+    return { habits: [], completed: {} };
   }
-  try {
-    const permission = await Notification.requestPermission();
-    notificationReady = permission === "granted";
-    $("reminderStatus").textContent = notificationReady
-      ? "Permission granted. Keep HabitFlow open around your chosen reminder time."
-      : "Permission not granted. You can use Apple's Reminders app instead.";
-  } catch {
-    $("reminderStatus").textContent = "Use Apple's Reminders app for a reliable daily alert.";
-  }
-};
-function checkReminder() {
-  if (!notificationReady || document.hidden) return;
-  const now = new Date();
-  const date = todayKey();
-  const time = String(now.getHours()).padStart(2,"0") + ":" +
-    String(now.getMinutes()).padStart(2,"0");
-  if (time === reminder && lastAlertDate !== date) {
-    lastAlertDate = date;
+
+  function loadData() {
     try {
-      new Notification("HabitFlow", {
-        body: "Take a moment to check off today's habits."
-      });
-    } catch {}
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return freshData();
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.habits) ||
+          !parsed.completed || typeof parsed.completed !== "object") {
+        return freshData();
+      }
+      parsed.habits = parsed.habits.filter(h =>
+        h && typeof h.id === "string" &&
+        typeof h.name === "string"
+      );
+      return parsed;
+    } catch (e) {
+      return freshData();
+    }
   }
-}
-render();
-setInterval(checkReminder, 20000);
+
+  let data = loadData();
+
+  function saveData() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      showStatus("Could not save data. Export a backup or free browser storage.");
+      return false;
+    }
+  }
+
+  function showStatus(message) {
+    $("statusMessage").textContent = message;
+  }
+
+  function isDone(id, day = localDate()) {
+    return Array.isArray(data.completed[day]) &&
+      data.completed[day].includes(id);
+  }
+
+  function setDone(id, day, done) {
+    if (!Array.isArray(data.completed[day])) data.completed[day] = [];
+    const list = data.completed[day];
+    data.completed[day] = done
+      ? [...new Set([...list, id])]
+      : list.filter(item => item !== id);
+    if (!data.completed[day].length) delete data.completed[day];
+  }
+
+  function streakFor(habit) {
+    let count = 0;
+    let day = localDate();
+
+    // If not completed today, an active streak can continue from yesterday.
+    if (!isDone(habit.id, day)) day = shiftDate(day, -1);
+
+    while (isDone(habit.id, day)) {
+      count++;
+      day = shiftDate(day, -1);
+      if (count > 10000) break;
+    }
+    return count;
+  }
+
+  function bestStreakFor(habit) {
+    const days = Object.keys(data.completed).sort();
+    if (!days.length) return streakFor(habit);
+
+    let best = 0;
+    let current = 0;
+    let previous = "";
+
+    for (const day of days) {
+      if (isDone(habit.id, day)) {
+        current = previous && shiftDate(previous, 1) === day
+          ? current + 1 : 1;
+        best = Math.max(best, current);
+        previous = day;
+      }
+    }
+    return Math.max(best, streakFor(habit));
+  }
+
+  function weekDates() {
+    const today = localDate();
+    return Array.from({ length: 7 }, (_, i) => shiftDate(today, i - 6));
+  }
+
+  function renderHabits() {
+    const list = $("habitList");
+    list.replaceChildren();
+
+    if (!data.habits.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No habits yet. Tap ＋ Add habit to create your first one.";
+      list.appendChild(empty);
+      return;
+    }
+
+    data.habits.forEach(habit => {
+      const done = isDone(habit.id);
+      const card = document.createElement("article");
+      card.className = "habit" + (done ? " completed" : "");
+
+      const check = document.createElement("button");
+      check.className = "check" + (done ? " done" : "");
+      check.textContent = done ? "✓" : "";
+      check.setAttribute("aria-label", done ? "Mark incomplete" : "Mark complete");
+      check.addEventListener("click", () => {
+        setDone(habit.id, localDate(), !isDone(habit.id));
+        saveData();
+        render();
+      });
+
+      const info = document.createElement("div");
+      info.className = "habit-info";
+
+      const name = document.createElement("div");
+      name.className = "habit-name";
+      name.textContent = habit.name;
+
+      const meta = document.createElement("div");
+      meta.className = "habit-meta";
+      meta.textContent = "🔥 " + streakFor(habit) + " day streak" +
+        (habit.reminder ? " · ⏰ " + habit.reminder : "");
+
+      info.append(name, meta);
+
+      const del = document.createElement("button");
+      del.className = "delete";
+      del.textContent = "×";
+      del.setAttribute("aria-label", "Delete " + habit.name);
+      del.addEventListener("click", () => {
+        if (!confirm('Delete "' + habit.name + '" and its saved history?')) return;
+        data.habits = data.habits.filter(h => h.id !== habit.id);
+        Object.keys(data.completed).forEach(day => {
+          data.completed[day] = data.completed[day].filter(id => id !== habit.id);
+          if (!data.completed[day].length) delete data.completed[day];
+        });
+        saveData();
+        render();
+      });
+
+      card.append(check, info, del);
+      list.appendChild(card);
+    });
+  }
+
+  function renderWeek() {
+    const dates = weekDates();
+    const grid = $("weekGrid");
+    grid.replaceChildren();
+    let total = 0;
+    let possible = data.habits.length * 7;
+
+    dates.forEach((day, i) => {
+      const count = data.habits.filter(h => isDone(h.id, day)).length;
+      total += count;
+
+      const cell = document.createElement("div");
+      cell.className = "day";
+
+      const label = document.createElement("div");
+      label.textContent = new Date(day + "T12:00:00")
+        .toLocaleDateString("en-US", { weekday: "short" });
+
+      const circle = document.createElement("div");
+      circle.className = "day-circle" + (count > 0 ? " active" : "");
+      circle.textContent = count;
+      circle.title = `${day}: ${count} habits completed`;
+
+      cell.append(label, circle);
+      grid.appendChild(cell);
+    });
+
+    const percent = possible ? Math.round(total / possible * 100) : 0;
+    $("weekFill").style.width = percent + "%";
+    $("weekSummary").textContent = `${total} habit completions in the last 7 days (${percent}% of possible check-offs).`;
+  }
+
+  function renderStats() {
+    const today = localDate();
+    const doneToday = data.habits.filter(h => isDone(h.id, today)).length;
+    const todayPercent = data.habits.length
+      ? Math.round(doneToday / data.habits.length * 100) : 0;
+
+    const weekTotal = weekDates().reduce((sum, day) =>
+      sum + data.habits.filter(h => isDone(h.id, day)).length, 0);
+
+    const best = data.habits.reduce((max, habit) =>
+      Math.max(max, bestStreakFor(habit)), 0);
+
+    $("progressNumber").textContent = todayPercent;
+    $("completedLabel").textContent = `${doneToday} / ${data.habits.length} DONE`;
+    $("progressFill").style.width = todayPercent + "%";
+    $("bestStreak").textContent = best + (best === 1 ? " day" : " days");
+    $("weeklyCompletions").textContent = weekTotal;
+    $("todayRate").textContent = todayPercent + "%";
+    $("totalHabits").textContent = data.habits.length;
+  }
+
+  function render() {
+    $("todayDate").textContent = new Date().toLocaleDateString("en-US", {
+      weekday: "long", month: "short", day: "numeric", year: "numeric"
+    });
+    renderHabits();
+    renderWeek();
+    renderStats();
+  }
+
+  $("showForm").addEventListener("click", () => {
+    $("formPanel").hidden = false;
+    $("habitName").focus();
+  });
+
+  $("cancelForm").addEventListener("click", () => {
+    $("formPanel").hidden = true;
+    $("habitForm").reset();
+  });
+
+  $("habitForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const name = $("habitName").value.trim();
+    const reminder = $("reminderTime").value;
+
+    if (!name) return;
+
+    data.habits.push({
+      id: (typeof crypto !== "undefined" && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + Math.random().toString(36).slice(2),
+      name,
+      reminder
+    });
+
+    saveData();
+    $("habitForm").reset();
+    $("formPanel").hidden = true;
+    render();
+
+    if (reminder) showStatus("Habit saved. Enable reminders and keep this page open for alerts.");
+  });
+
+  $("reminderPermission").addEventListener("click", async () => {
+    if (!("Notification" in window)) {
+      showStatus("Notifications are not supported in this browser.");
+      return;
+    }
+    if (Notification.permission === "granted") {
+      showStatus("Notifications are enabled. Keep the app open for reminders.");
+      return;
+    }
+    if (Notification.permission === "denied") {
+      showStatus("Notifications are blocked. Allow them in your browser settings.");
+      return;
+    }
+    try {
+      const permission = await Notification.requestPermission();
+      showStatus(permission === "granted"
+        ? "Notifications enabled. Keep this page open for reminders."
+        : "Notification permission was not granted.");
+    } catch (e) {
+      showStatus("Could not request notification permission in this browser.");
+    }
+  });
+
+  // Browser reminders: the page must be open, and notifications must be allowed.
+  function checkReminders() {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+    const now = new Date();
+    const today = localDate();
+    const time = String(now.getHours()).padStart(2, "0") + ":" +
+      String(now.getMinutes()).padStart(2, "0");
+
+    data.habits.forEach(habit => {
+      if (!habit.reminder || habit.reminder !== time || isDone(habit.id, today)) return;
+
+      const key = "habitflow_notified_" + today + "_" + habit.id;
+      if (localStorage.getItem(key) === "yes") return;
+
+      try {
+        new Notification("HabitFlow reminder", {
+          body: "Time for your habit: " + habit.name
+        });
+        localStorage.setItem(key, "yes");
+      } catch (e) {
+        // Notifications may be unavailable in some browser contexts.
+      }
+    });
+  }
+
+  $("exportData").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json"
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "habitflow-backup.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus("Backup exported.");
+  });
+
+  $("importButton").addEventListener("click", () => $("importFile").click());
+
+  $("importFile").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!parsed || !Array.isArray(parsed.habits) ||
+          !parsed.completed || typeof parsed.completed !== "object") {
+        throw new Error("Invalid backup");
+      }
+      const valid = parsed.habits.every(h =>
+        h && typeof h.id === "string" && typeof h.name === "string"
+      );
+      if (!valid) throw new Error("Invalid habits");
+
+      if (!confirm("Replace current data with this backup?")) return;
+      data = parsed;
+      saveData();
+      render();
+      showStatus("Backup imported.");
+    } catch (e) {
+      showStatus("Could not import that file. Choose a valid HabitFlow backup.");
+    } finally {
+      event.target.value = "";
+    }
+  });
+
+  render();
+  checkReminders();
+  setInterval(checkReminders, 15000);
+
+  // Refresh the displayed day when the app returns to the foreground.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      render();
+      checkReminders();
+    }
+  });
+})();
 </script>
 </body>
 </html>
